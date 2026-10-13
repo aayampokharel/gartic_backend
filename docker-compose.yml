@@ -1,0 +1,8 @@
+services: 
+  gartic_backend:
+    build: 
+      context: .
+      dockerfile: web.dockerfile 
+    ports: 
+      - "8080:8080"
+    
