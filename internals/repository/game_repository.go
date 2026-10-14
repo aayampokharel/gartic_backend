@@ -32,7 +32,7 @@ type GameRepository struct {
 
 func NewGameRepository() *GameRepository {
 	return &GameRepository{
-		Slices:           []string{"ball", "brother"},
+		Slices:           []string{"ball", "brother", "cricket", "football", "hello", "pencil", "red", "yellow", "blue", "baseball", "ant", "elephant", "orange"},
 		MapOfConnection:  make(map[*websocket.Conn]string),
 		MapOfConnections: make(map[*websocket.Conn]bool),
 		MapForStream:     make(map[*websocket.Conn]bool),
