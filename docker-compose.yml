@@ -5,4 +5,9 @@ services:
       dockerfile: web.dockerfile 
     ports: 
       - "8080:8080"
-    
+  gartic_frontend:
+    build:
+      context: . 
+      dockerfile: web_fe.dockerfile
+    ports:
+      - "8090:80"
