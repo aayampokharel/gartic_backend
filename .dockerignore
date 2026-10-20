@@ -1,0 +1,11 @@
+# Keep the Docker build context clean and reproducible.
+#
+# The host `gartic_frontend/.dart_tool`/`build` folders are copied into the
+# image by `COPY gartic_frontend/ .` and can point at the host Flutter SDK,
+# making the in-container `flutter build web` use stale/mismatched package
+# paths. Exclude them so every image build compiles from a clean tree.
+**/.dart_tool/
+**/build/
+.git/
+.idea/
+**/*.iml
