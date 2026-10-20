@@ -58,6 +58,7 @@ class _MyAppState extends State<MyApp> {
   var responses;
 
   var messageStream;
+  StreamSubscription? _messageSubscription;
   var forDrawerVariable;
   Map<String, int> drawerMap = {};
 
@@ -71,6 +72,12 @@ class _MyAppState extends State<MyApp> {
     responses = ApiService.post(widget.currentName);
 
     messageStream = channel.broadcastStream();
+    _messageSubscription = messageStream.listen((data) {
+      if (!mounted) return;
+      setState(() {
+        listOfMessage.add(json.decode(data.toString()));
+      });
+    });
   }
 
   dynamic insideOnPressed(String str) {
@@ -183,8 +190,6 @@ class _MyAppState extends State<MyApp> {
       stream: messageStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          listOfMessage.add(json.decode(snapshot.data.toString()));
-
           return Center(
             child: SingleChildScrollView(
               //#  BLUE ONE displayed after the first msg is sent else black color one.
@@ -232,6 +237,7 @@ class _MyAppState extends State<MyApp> {
     // Close the StreamControllers
     drawerStream.close();
     boolStreamController.close();
+    _messageSubscription?.cancel();
 
     // Dispose the TextEditingController
     chatController.dispose();

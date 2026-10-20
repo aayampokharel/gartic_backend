@@ -62,7 +62,7 @@ class _NameState extends State<Name> with SingleTickerProviderStateMixin {
                   image: DecorationImage(
                     fit: BoxFit.fill,
                     image: AssetImage(
-                      'photos/Gartic.png',
+                      'assets/photos/Gartic.png',
                     ),
                   ),
                 ),

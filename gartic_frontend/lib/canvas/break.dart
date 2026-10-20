@@ -23,7 +23,7 @@ class BreakContainer extends StatelessWidget {
         ),
         Container(
           child: Image.asset(
-            "photos/flashClock.gif",
+            "assets/photos/flashClock.gif",
             fit: BoxFit.contain,
           ),
         ),

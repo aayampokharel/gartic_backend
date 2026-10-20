@@ -41,6 +41,9 @@ class _PainterState extends State<Painter> {
 
   var toogleValueForProgressBar = false;
 
+  String? _lastTurnValue;
+  bool _breakOverlayDismissed = false;
+
   AnimationService forProgressBar = AnimationService();
 
   @override
@@ -78,8 +81,15 @@ class _PainterState extends State<Painter> {
 
           /// this is for checking if the turn is this particular user or not
           builder: (context, snapshott) {
-            drawingController.clear();
-            guesserController.clear();
+            //! clear ONLY when the turn actually changes, otherwise every
+            //! rebuild (e.g. incoming paint frames) wipes the board.
+            final turnValue = snapshott.data?.toString();
+            if (_lastTurnValue != turnValue) {
+              _lastTurnValue = turnValue;
+              _breakOverlayDismissed = false;
+              drawingController.clear();
+              guesserController.clear();
+            }
             singleValue = localName;
             if (snapshott.data == widget.currentName) {
               widget.localStreamForTextField(true);
@@ -125,6 +135,11 @@ class _PainterState extends State<Painter> {
               });
 
               toogleValueForProgressBar = true;
+              if (!_breakOverlayDismissed) {
+                _breakOverlayDismissed = true;
+                Future.delayed(const Duration(milliseconds: 300),
+                    () => widget.toogleBlurSetState());
+              }
               return const BreakContainer();
 
               /// below code is for display of drawn elements.
@@ -150,21 +165,11 @@ class _PainterState extends State<Painter> {
   void dispose() {
     // Close the WebSocket channels
     paintChannel.close();
-    paintChannel.drain();
     checkChannel.close();
-    checkChannel.drain();
 
     // Dispose the drawing controllers
     drawingController.dispose();
     guesserController.dispose();
-
-    // Close the streams if they have subscriptions
-    if (paintStream is StreamSubscription) {
-      (paintStream as StreamSubscription).cancel();
-    }
-    if (checkStream is StreamSubscription) {
-      (checkStream as StreamSubscription).cancel();
-    }
 
     super.dispose();
   }

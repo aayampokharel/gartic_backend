@@ -45,7 +45,7 @@ func NewGameRepository() *GameRepository {
 		ToogleForTimer:   true,
 		Mutex4LockCheck:  false,
 		ListOfAllNames:   []models.PlayerPoints{},
-		NameForMap:       make(chan string),
+		NameForMap:       make(chan string, 100),
 	}
 }
 

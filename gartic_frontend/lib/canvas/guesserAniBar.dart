@@ -24,7 +24,7 @@ class GuesserAnimationBar extends StatelessWidget {
               return TweenAnimationBuilder(
                 duration: Duration(
                     milliseconds:
-                        19600 - int.parse(responseDoubleTime.toString())),
+                        19600 - responseDoubleTime.toInt()),
                 tween: Tween<double>(
                   begin: (responseDoubleTime / 1000) * 15,
                   end: MediaQuery.of(context).size.width *
