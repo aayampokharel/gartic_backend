@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:x/logic/ChatController.dart';
 import 'package:x/Message/fieldRow.dart';
+import 'package:x/theme/app_theme.dart';
 
 class okButtonControl extends StatelessWidget {
   AsyncSnapshot<Object?> snapshot;
@@ -17,23 +18,21 @@ class okButtonControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (snapshot.hasData) {
-      //? this below is not required as ?? false ko use nai bhaena ni after data is there .
-
-      return Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-                color: Color.fromARGB(255, 192, 192, 192).withOpacity(0.5),
-                width: 3),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: fieldRow(noEntrySnapshot, chatController, insideOnPressed));
-
-      //     //@ this is for boolean stream controller. only displayed when no data i.e. at first
-
-      //     //! this is the row which is displayed after one click on ok as yo streambuilder returns below code first when no data . after press, there is data and never that code is repeated, and this is the one which again goes for snapshot.hasdata==false as initially it has no data.
-    } else {
-      return const CircularProgressIndicator();
+    if (!snapshot.hasData) {
+      return const Padding(
+        padding: EdgeInsets.all(16),
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
+
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.line),
+      ),
+      child: fieldRow(noEntrySnapshot, chatController, insideOnPressed),
+    );
   }
 }

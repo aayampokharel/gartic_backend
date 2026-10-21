@@ -1,43 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:x/logic/ChatController.dart';
+import 'package:x/theme/app_theme.dart';
 
 Widget fieldRow(AsyncSnapshot noEntrySnapshot, ChatController chatCtrl,
     dynamic Function(String) insideOnPressed) {
-  return Container(
-    width: double.infinity,
-    color: Color.fromARGB(221, 245, 242, 242),
-    child: Row(
-      children: [
-        Expanded(
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Type Your  Guess...',
-            ),
+  final bool readOnly = noEntrySnapshot.data ?? false;
 
-            //! redundant code here and below .
-            readOnly: noEntrySnapshot.data ?? false,
-            controller: chatCtrl.controller(),
-            onSubmitted: (text) {
-              if (noEntrySnapshot.data == false) {
-                insideOnPressed(text);
-                chatCtrl.txtReader(""); //for inputing value when false.
-              } else {
-                null;
-              }
-            },
+  void submit(String text) {
+    if (readOnly) return;
+    if (text.trim().isEmpty) return;
+    insideOnPressed(text.trim());
+    chatCtrl.txtReader("");
+  }
+
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.end,
+    children: [
+      Expanded(
+        child: TextField(
+          controller: chatCtrl.controller(),
+          readOnly: readOnly,
+          textInputAction: TextInputAction.send,
+          onSubmitted: submit,
+          decoration: InputDecoration(
+            isDense: true,
+            hintText:
+                readOnly ? 'Wait for your turn...' : 'Type your guess...',
+            prefixIcon: const Icon(Icons.chat_bubble_outline, size: 20),
           ),
         ),
-        ElevatedButton(
-            onPressed: () {
-              if (noEntrySnapshot.data == false) {
-                insideOnPressed(chatCtrl.txt());
-                chatCtrl.txtReader("");
-              } else {
-                null;
-              }
-            },
-            child: const Text("OK")),
-      ],
-    ),
+      ),
+      const SizedBox(width: 10),
+      SizedBox(
+        height: 48,
+        child: ElevatedButton(
+          onPressed: readOnly ? null : () => submit(chatCtrl.txt()),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: readOnly ? Colors.grey : AppColors.primary,
+            padding: const EdgeInsets.symmetric(horizontal: 18),
+          ),
+          child: const Icon(Icons.send_rounded, size: 20),
+        ),
+      ),
+    ],
   );
 }

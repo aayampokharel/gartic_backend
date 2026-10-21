@@ -11,6 +11,7 @@ import 'package:x/WordForDrawer.dart';
 import 'package:x/logic/checkChannel.dart';
 import 'package:x/logic/paintChannel.dart';
 import 'package:x/main.dart';
+import 'package:x/theme/app_theme.dart';
 
 class Painter extends StatefulWidget {
   @override
@@ -74,8 +75,8 @@ class _PainterState extends State<Painter> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8.0),
-      color: Color(0xffd2507583),
+      padding: const EdgeInsets.all(8.0),
+      color: Colors.transparent,
       child: StreamBuilder(
           stream: checkStream,
 
@@ -103,21 +104,36 @@ class _PainterState extends State<Painter> {
                 runBlurOnce = false;
               }
               return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const TurnBanner(
+                    title: 'Your turn to draw!',
+                    subtitle: 'Sketch the word below — everyone else is guessing.',
+                    icon: Icons.brush_rounded,
+                  ),
+                  const SizedBox(height: 10),
                   animationBar(context),
+                  const SizedBox(height: 10),
                   Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
+                      borderRadius: BorderRadius.circular(14),
                       color: Colors.white,
-                      border: Border.all(width: 3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.25),
+                          blurRadius: 24,
+                          offset: const Offset(0, 12),
+                        ),
+                      ],
                     ),
+                    clipBehavior: Clip.antiAlias,
                     child: Column(
                       children: [
                         WordForDrawer(singleValue),
-                        Drawing(paintChannel, drawingController),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Drawing(paintChannel, drawingController),
+                        ),
                       ],
                     ),
                   ),

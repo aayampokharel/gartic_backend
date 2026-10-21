@@ -1,7 +1,7 @@
-//#c5c5c5 (background colorof the speed clockimage ) is the required color theme here . i am going to create some old magic thing here.
-//@ for background
+//@ application entry point + global theme.
 import 'package:flutter/material.dart';
 import 'package:x/NameFirst.dart';
+import 'package:x/theme/app_theme.dart';
 
 void main() {
   runApp(const MyApps());
@@ -17,10 +17,8 @@ class MyApps extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          colorScheme:
-              ColorScheme.fromSeed(seedColor: const Color(0xffc5c5c5))),
-      home: Name(),
+      theme: buildAppTheme(),
+      home: const Name(),
     );
   }
 }

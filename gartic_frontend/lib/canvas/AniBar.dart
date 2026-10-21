@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:x/theme/app_theme.dart';
 
 TweenAnimationBuilder<double> animationBar(BuildContext context) {
   return TweenAnimationBuilder(
@@ -10,16 +11,19 @@ TweenAnimationBuilder<double> animationBar(BuildContext context) {
     builder: (BuildContext context, dynamic value, Widget? child) {
       return Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 2, color: Colors.black),
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(928163), Color.fromARGB(255, 129, 215, 241)]),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(width: 2, color: Colors.white24),
+          gradient: AppGradients.timer,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.45),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        height: 20,
+        height: 16,
         width: value,
-        // color: Color.fromARGB(255, 52, 51, 50),
       );
     },
   );

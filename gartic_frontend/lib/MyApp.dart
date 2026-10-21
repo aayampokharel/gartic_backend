@@ -14,8 +14,9 @@ import 'package:x/logic/apiservice.dart';
 import 'package:x/logic/boolStream.dart';
 import 'package:x/logic/channel.dart';
 import 'package:x/logic/drawerStream.dart';
-import 'package:x/messsagecontainer.dart';
+import 'package:x/Message/messageList.dart';
 import 'package:x/okButtonControl.dart';
+import 'package:x/theme/app_theme.dart';
 import 'package:x/painterStructure.dart';
 import 'package:x/main.dart';
 import 'package:http/http.dart' as http;
@@ -115,12 +116,14 @@ class _MyAppState extends State<MyApp> {
       //   ),
       // ),
       appBar: AppBar(
-        title: Center(
-          child: const Text(
-            'Draw & Guess ',
-            style: TextStyle(fontFamily: 'gravitas'),
-          ),
-        ), //! I HAVENOT ADDED THE REBUILD OF THE TOOGLEREADONLY ABA TYO KASARI GARNE HO BASED ON SOME VALUE GARNE HO KI HOINA BHANERA DISCUSS GARNA PARCHA .
+        title: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.brush_rounded, size: 22),
+            SizedBox(width: 8),
+            Text('Draw & Guess', style: TextStyle(fontFamily: 'gravitas')),
+          ],
+        ),
         // leading: IconButton(
         //   onPressed: () async {
         //     var res =
@@ -134,9 +137,15 @@ class _MyAppState extends State<MyApp> {
         //   icon: const Icon(Icons.menu),
         // ),
       ),
+      backgroundColor: AppColors.backgroundTop,
       body: Stack(
         alignment: Alignment.center,
         children: [
+          const Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(gradient: AppGradients.background),
+            ),
+          ),
           FutureBuilder(
               future:
                   responses, //! responses compulsory cha cause esle add ni garirako cha the currentName to the list in the backend an return ing first  element which is irrelevant OR RETURNS BREAK IF ALL ARE IN BREAK but the thiing will only be returned after the adding of element in the liist
@@ -144,16 +153,24 @@ class _MyAppState extends State<MyApp> {
                 if (snapshots.connectionState == ConnectionState.done) {
                   currentTurn = snapshots.data.toString();
                   return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Painter(
-                            widget.currentName,
-                            currentTurn,
-                            boolStreamController.add,
-                            widget.getListOfWords,
-                            toogleBlurSetState),
-                        messageStreamBuilder(),
-                      ],
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 1024),
+                        child: Column(
+                          children: [
+                            Painter(
+                                widget.currentName,
+                                currentTurn,
+                                boolStreamController.add,
+                                widget.getListOfWords,
+                                toogleBlurSetState),
+                            const SizedBox(height: 14),
+                            messageStreamBuilder(),
+                          ],
+                        ),
+                      ),
                     ),
                   );
                 } else {
@@ -168,16 +185,30 @@ class _MyAppState extends State<MyApp> {
             visible: toogleValueForBlur,
             child: IgnorePointer(
               child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                  child: Container(
-                      color: Colors.white.withOpacity(0.5),
-                      height: double.infinity,
-                      width: double.infinity,
-                      child: Center(
-                          child: SizedBox(
-                              height: 200,
-                              width: 200,
-                              child: const CircularProgressIndicator())))),
+                filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                child: Container(
+                  color: AppColors.backgroundTop.withValues(alpha: 0.55),
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(
+                          height: 56,
+                          width: 56,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 4, color: AppColors.accent),
+                        ),
+                        const SizedBox(height: 18),
+                        Text('Connecting to the game...',
+                            style: AppText.onDark.copyWith(
+                                fontSize: 18, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -189,42 +220,40 @@ class _MyAppState extends State<MyApp> {
     return StreamBuilder(
       stream: messageStream,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Center(
-            child: SingleChildScrollView(
-              //#  BLUE ONE displayed after the first msg is sent else black color one.
-              child: Container(
-                width: 500,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color(
-                      0xfff1f1f1), //@ for sizing width and height of the message box .
-                ),
-                child: Column(
-                  children: [
-                    containerForMessage(listOfMessage), //!problem here  BELOW:
-                    StreamBuilder<bool>(
-                        //! this controls the nullness of the ok button when answer is right .
-                        stream: boolStreamController.stream,
-                        builder: (context, noEntrySnapshot) {
-                          return okButtonControl(
-                              snapshot: snapshot,
-                              noEntrySnapshot: noEntrySnapshot,
-                              chatController: chatController,
-                              insideOnPressed: insideOnPressed);
-                        }),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
-
-        //? never used below.
-        return const CircularProgressIndicator();
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: Colors.white24),
+              ),
+              child: Column(
+                children: [
+                  MessageList(
+                      messages: listOfMessage,
+                      currentName: widget.currentName),
+                  const SizedBox(height: 12),
+                  StreamBuilder<bool>(
+                      //! controls the read-only state after a correct answer.
+                      stream: boolStreamController.stream,
+                      builder: (context, noEntrySnapshot) {
+                        return okButtonControl(
+                            snapshot: snapshot,
+                            noEntrySnapshot: noEntrySnapshot,
+                            chatController: chatController,
+                            insideOnPressed: insideOnPressed);
+                      }),
+                ],
+              ),
+            ),
+          ),
+        );
       },
     );
   }
