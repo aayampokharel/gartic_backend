@@ -3,7 +3,7 @@ WORKDIR /app
 COPY go.mod go.sum .
 RUN go mod download
 COPY . . 
-RUN go build -o ./gartic_backend .
+RUN go build -o ./gartic_backend ./cmd
 
 
 FROM alpine:3.24.2 as prod
