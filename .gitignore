@@ -1,0 +1,46 @@
+# ---------------------------------------------------------------------------
+# Compiled Go binaries / build output
+# ---------------------------------------------------------------------------
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/gartic_backend
+gartic_backend
+
+# ---------------------------------------------------------------------------
+# Flutter / Dart build & tooling junk inside the frontend
+# ---------------------------------------------------------------------------
+gartic_frontend/.dart_tool/
+gartic_frontend/.flutter-plugins
+gartic_frontend/.flutter-plugins-dependencies
+gartic_frontend/.packages
+gartic_frontend/build/
+gartic_frontend/.pub-cache/
+gartic_frontend/.pub/
+gartic_frontend/flutter_*.png
+gartic_frontend/coverage/
+
+gartic_frontend/.idea/
+gartic_frontend/.vscode/
+gartic_frontend/*.iml
+
+gartic_frontend/windows/
+gartic_frontend/linux/
+gartic_frontend/macos/
+gartic_frontend/ios/
+gartic_frontend/android/
+gartic_frontend/.metadata
+
+# ---------------------------------------------------------------------------
+# Generic OS / editor noise
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
