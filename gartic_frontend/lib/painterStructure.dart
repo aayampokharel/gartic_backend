@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_drawing_board/flutter_drawing_board.dart';
 import 'package:flutter/material.dart';
-import 'package:x/canvas/AniBar.dart';
 import 'package:x/canvas/AnimationService.dart';
+import 'package:x/canvas/TurnProgressBar.dart';
 import 'package:x/canvas/break.dart';
 import 'package:x/canvas/drawing.dart';
 import 'package:x/canvas/guesserStructure.dart';
@@ -40,10 +40,12 @@ class _PainterState extends State<Painter> {
   late Stream paintStream;
   late Stream checkStream;
 
-  var toogleValueForProgressBar = false;
-
   String? _lastTurnValue;
   bool _breakOverlayDismissed = false;
+
+  /// Bumped every time a fresh word is fetched for the drawer so the turn
+  /// timer always restarts from 0 for their turn.
+  int _wordNonce = 0;
 
   AnimationService forProgressBar = AnimationService();
 
@@ -66,8 +68,8 @@ class _PainterState extends State<Painter> {
     return widget.getListOfWords().then((value) {
       setState(() {
         singleValue = jsonDecode(value).toString();
-        localName =
-            singleValue; //! this is causing the initial rebuild of widget which is not good dbecause of setstate. or its another issue. but 500ms bhitra there is setstate running .ELSE USE CIRCULAR PROGRESS INDICATOR.
+        localName = singleValue;
+        _wordNonce++;
       });
     });
   }
@@ -112,7 +114,13 @@ class _PainterState extends State<Painter> {
                     icon: Icons.brush_rounded,
                   ),
                   const SizedBox(height: 10),
-                  animationBar(context),
+                  //! The drawer's own turn starts the moment they get the word,
+                  //! so the bar must always run a fresh 0 -> end (no server
+                  //! elapsed calibration, which used to freeze it at the end).
+                  TurnProgressBar(
+                    restartToken: 'draw-${widget.currentName}-$_wordNonce',
+                    maxWidth: MediaQuery.of(context).size.width * 0.75,
+                  ),
                   const SizedBox(height: 10),
                   Container(
                     decoration: BoxDecoration(
@@ -148,9 +156,9 @@ class _PainterState extends State<Painter> {
 
               widget.getListOfWords().then((value) {
                 localName = jsonDecode(value).toString();
+                _wordNonce++;
               });
 
-              toogleValueForProgressBar = true;
               if (!_breakOverlayDismissed) {
                 _breakOverlayDismissed = true;
                 Future.delayed(const Duration(milliseconds: 300),
@@ -170,8 +178,11 @@ class _PainterState extends State<Painter> {
                     () => widget.toogleBlurSetState());
                 runBlurOnce = false;
               }
-              return guesserStructure(toogleValueForProgressBar, forProgressBar,
-                  paintStream, guesserController);
+              return guesserStructure(
+                  currentTurn: turnValue ?? '',
+                  forProgressBar: forProgressBar,
+                  paintStream: paintStream,
+                  guesserController: guesserController);
             }
           }),
     );

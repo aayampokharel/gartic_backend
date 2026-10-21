@@ -178,7 +178,8 @@ func (s *GameService) HandleStream(ctx context.Context, ca *websocket.Conn) {
 
 			time.Sleep(time.Millisecond * 500)
 
-			if s.repo.CountForTimer = s.repo.CountForTimer + 0.5; s.repo.CountForTimer == 20 {
+			if s.repo.CountForTimer = s.repo.CountForTimer + 0.5; s.repo.CountForTimer == 40 {
+				//@ each drawing turn lasts 40 seconds before the break.
 
 				s.repo.ToogleForProgressBar = true
 				s.repo.CountForTimer = 0

@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_drawing_board/src/drawing_controller.dart';
+import 'package:x/canvas/TurnProgressBar.dart';
 import 'package:x/canvas/guesser.dart';
-import 'package:x/canvas/guesserAniBar.dart';
 import 'package:x/theme/app_theme.dart';
 
 class guesserStructure extends StatelessWidget {
-  bool toogleValueForProgressBar;
+  final String currentTurn;
+  final dynamic forProgressBar;
+  final dynamic paintStream;
+  final DrawingController guesserController;
 
-  var forProgressBar;
-
-  var paintStream;
-
-  DrawingController guesserController;
-
-  guesserStructure(this.toogleValueForProgressBar, this.forProgressBar,
-      this.paintStream, this.guesserController,
-      {super.key});
+  guesserStructure({
+    super.key,
+    required this.currentTurn,
+    required this.forProgressBar,
+    required this.paintStream,
+    required this.guesserController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +34,10 @@ class guesserStructure extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        GuesserAnimationBar(
-          toogleValueForProgressBar,
-          forProgressBar,
+        TurnProgressBar(
+          restartToken: 'guess-$currentTurn',
+          maxWidth: width,
+          fetchElapsed: forProgressBar.forProgressBar,
         ),
         const SizedBox(height: 10),
         Container(
